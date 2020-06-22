@@ -296,8 +296,9 @@ function worker(count)
 			if flag then
 
 				counter = counter + 1;
-
 			end;
+
+			collectgarbage();
 
 			if counter == count then break end;
 
