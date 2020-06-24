@@ -12,6 +12,50 @@ local path = [[E:/json_script_out/f_o/]];
 local file_subfld = [[E:/json_script_out/f_o/err/]];
 --local count_in = 300;
 local counter = 0;
+local start_i = 0;
+local i_i = 0;
+local start_name = 'ÂÎĞÎÍÖÎÂÀ_ÎËÅÑß_24.10.1977';
+local flg = false;
+
+function split_table(filename,tab)
+
+	local prefix = 0;
+	local size = 100;
+
+	if #tab < size then
+
+		writefile(filename..tostring(prefix), json.encode(tab))
+
+	else
+
+		local writer = {};
+		writer[1] = {};
+
+		for num = 1, #tab, 1 do
+
+			local m = math.modf(num/size)
+			table.insert(writer[m+1], tab[num])
+			if math.fmod(num, size) == 99 then writer[#writer+1] = {}; end;
+
+		end;
+
+		for ls = 1, #writer, 1 do
+
+			writefile(filename..tostring(ls), json.encode(writer[ls]))
+
+		end;
+
+
+		-- while true do
+		--   writefile(filename..tostring(prefix), table.subarray(tbl,1,size))
+		--   tab = table.subarray(tab, size + 1, #size)
+		--   prefix = prefix + 1
+		--   if #tab < size then break end
+		-- end
+		-- writefile(filename..tostring(prefix), table.subarray(tbl,1,size))
+
+	end;
+end;
 
 function validate_new(info)
 
@@ -83,21 +127,22 @@ end;
 
 function worker(count)
 
-	log_files('[\n');
+	-- log_files('[\n');
 
 	local peoples = baseFL:GetRecordSet();
 
-
 	for people in peoples.Records do
 
-		local FILE = {};
-		local File_er = {};
+		i_i = i_i+1;
+		-- local File_er = {};
 		local name = people:GetValue(2);
 		local surn = people:GetValue(1);
 		local birth = people:GetValue(4);
-
+		if (surn..'_'..name..'_'..birth) == start_name then flg = true; end;
+		if i_i <= start_i or flg == false then continue end;
+		local FILE = {};
 		--MsgBox(render(name, surn, birth));
-		log(surn..'_'..name..'_'..birth..'\n');
+		log(surn..'_'..name..'_'..birth..'_'..tostring(i_i)..'\n');
 		local Person = configure.Json_Configure(surn, name, birth);
 		-- ÎÆÎÃÈÍÀ_ÈĞÈÍÀ_02.11.1966
 		-- local Person = configure.Json_Configure('ÎÆÎÃÈÍÀ', 'ÈĞÈÍÀ', '02.11.1966');
@@ -141,15 +186,15 @@ function worker(count)
 					sub_writer['IP'] = {};
 					sub_writer['IP'][1] = Person['IP'][IP];
 
-					if ((sub_writer['TUTDF'][1]['reportedDate']) and (sub_writer['TUTDF'][1]['reportedDate'] == '')) then
-
-						table.insert(File_er, sub_writer);
-
-					else
+					-- if ((sub_writer['TUTDF'][1]['reportedDate']) and (sub_writer['TUTDF'][1]['reportedDate'] == '')) then
+					--
+					-- 	table.insert(File_er, sub_writer);
+					--
+					-- else
 
 						table.insert(FILE, sub_writer);
 
-					end;
+					-- end;
 
 					--MsgBox(render(sub_writer))
 					--error 'STOP'
@@ -188,15 +233,15 @@ function worker(count)
 							--MsgBox(render(writer))
 							--error 'STOP'
 
-							if ((writer['TUTDF'][1]['reportedDate']) and (writer['TUTDF'][1]['reportedDate'] == '')) then
+							-- if ((writer['TUTDF'][1]['reportedDate']) and (writer['TUTDF'][1]['reportedDate'] == '')) then
+							--
+							-- 	table.insert(File_er, writer);
+							--
+							-- else
 
-								table.insert(File_er, writer);
+								-- table.insert(FILE, writer);
 
-							else
-
-								table.insert(FILE, writer);
-
-							end;
+							-- end;
 
 							table.insert(FILE, writer);
 
@@ -206,15 +251,15 @@ function worker(count)
 
 					sub_writer['TR'][1]['PA'] = nil;
 
-					if ((sub_writer['TUTDF'][1]['reportedDate']) and (sub_writer['TUTDF'][1]['reportedDate'] == '')) then
-
-						table.insert(File_er, sub_writer);
-
-					else
+					-- if ((sub_writer['TUTDF'][1]['reportedDate']) and (sub_writer['TUTDF'][1]['reportedDate'] == '')) then
+					--
+					-- 	table.insert(File_er, sub_writer);
+					--
+					-- else
 
 						table.insert(FILE, sub_writer);
 
-					end;
+					-- end;
 
 					--MsgBox(render(sub_writer))
 					--error 'STOP'
@@ -226,7 +271,8 @@ function worker(count)
 			if (not table.isempty(FILE)) then
 
 				local file = path..name..'_'..surn..'_'..birth..[[.json]];
-				local sub_file = file_subfld..name..'_'..surn..'_'..birth..[[.json]];
+				-- local sub_file = file_subfld..name..'_'..surn..'_'..birth..[[.json]];
+
 				function compare(a,b)
 
 					return a[2] < b[2];
@@ -251,15 +297,15 @@ function worker(count)
 						--items[i][1]
 
 
-						if ((tablet[items[i][1]]['TUTDF'][1]['userName']) and (tablet[items[i][1]]['TUTDF'][1]['userName'] == '')) then
-
-							File_er[i] = tablet[items[i][1]]
-
-						else
+						-- if ((tablet[items[i][1]]['TUTDF'][1]['userName']) and (tablet[items[i][1]]['TUTDF'][1]['userName'] == '')) then
+						--
+						-- 	File_er[i] = tablet[items[i][1]]
+						--
+						-- else
 
 							sorted_table[i] = tablet[items[i][1]];
 
-						end;
+						-- end;
 
 					end;
 
@@ -269,24 +315,26 @@ function worker(count)
 
 				FILE = sortFile(FILE);
 
-				WRITEFILE(file, json.encode(FILE));
-				WRITEFILE(sub_file, json.encode(File_er));
+				-- WRITEFILE(file, json.encode(FILE));
+
+				split_table(file, FILE)
+				-- WRITEFILE(sub_file, json.encode(File_er));
 				-----
-				local validate = {};
+				-- local validate = {};
 
-				for i in ipairs(FILE) do
-
-					--table.insert(validate, configure.validate(FILE[i]));
-					--local status, errors = validate_new(FILE[i]);
-					--local status, errors = configure.validate(FILE[i]);
-
-					--if not status then table.insert(validate, {['status'] = status, ['errors'] = errors}); end;
-					log_files(json.encode(FILE[i])..',\n')
-					--log('\n_at ='..name..'_'..surn..'_'..birth..'_validate_old_results to ='..json.encode(validate)..'\n');
-					--validate = validate_new(FILE);
-					--log('\n_at ='..name..'_'..surn..'_'..birth..'_validate_new_results to ='..json.encode(validate)..'\n');
-
-				end;
+				-- for i in ipairs(FILE) do
+				--
+				-- 	--table.insert(validate, configure.validate(FILE[i]));
+				-- 	--local status, errors = validate_new(FILE[i]);
+				-- 	--local status, errors = configure.validate(FILE[i]);
+				--
+				-- 	--if not status then table.insert(validate, {['status'] = status, ['errors'] = errors}); end;
+				-- 	log_files(json.encode(FILE[i])..',\n')
+				-- 	--log('\n_at ='..name..'_'..surn..'_'..birth..'_validate_old_results to ='..json.encode(validate)..'\n');
+				-- 	--validate = validate_new(FILE);
+				-- 	--log('\n_at ='..name..'_'..surn..'_'..birth..'_validate_new_results to ='..json.encode(validate)..'\n');
+				--
+				-- end;
 
 				--if not table.isempty(validate) then log_valid(validate, name..'_'..surn..'_'..birth..[[.json]]); end;
 				-----
