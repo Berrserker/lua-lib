@@ -35,7 +35,7 @@ function split_table(filename,tab)
 
 			local m = math.modf(num/size)
 			table.insert(writer[m+1], tab[num])
-			if math.fmod(num, size) == 99 then writer[#writer+1] = {}; end;
+			if math.fmod(num, size) == 99 and (num != size) then writer[#writer+1] = {}; end;
 
 		end;
 
@@ -55,6 +55,7 @@ function split_table(filename,tab)
 		-- writefile(filename..tostring(prefix), table.subarray(tbl,1,size))
 
 	end;
+
 end;
 
 function validate_new(info)
