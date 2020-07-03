@@ -276,41 +276,44 @@ function worker(count)
 
 				function compare(a,b)
 
-					return a[2] < b[2];
-
+					-- return a[2] < b[2];
+					return a['TUTDF'][1]['reportedDate'] < b['TUTDF'][1]['reportedDate'];
 				end;
 
 				local function sortFile(tablet)
 
 					local items = {};
-					for i in ipairs(tablet) do
 
-						table.insert(items, {i, tablet[i]['TUTDF'][1]['reportedDate']});
-
-					end;
+					-- for i in ipairs(tablet) do
+					--
+					-- 	table.insert(items, {i, tablet[i]['TUTDF'][1]['reportedDate']});
+					--
+					-- end;
 
 					table.sort(items, compare);
 
-					local sorted_table = {};
+					return items;
+					--
+					-- local sorted_table = {};
+					--
+					-- for i in ipairs(items) do
+					--
+					-- 	--items[i][1]
+					--
+					--
+					-- 	-- if ((tablet[items[i][1]]['TUTDF'][1]['userName']) and (tablet[items[i][1]]['TUTDF'][1]['userName'] == '')) then
+					-- 	--
+					-- 	-- 	File_er[i] = tablet[items[i][1]]
+					-- 	--
+					-- 	-- else
+					--
+					-- 		sorted_table[i] = tablet[items[i][1]];
+					--
+					-- 	-- end;
+					--
+					-- end;
 
-					for i in ipairs(items) do
-
-						--items[i][1]
-
-
-						-- if ((tablet[items[i][1]]['TUTDF'][1]['userName']) and (tablet[items[i][1]]['TUTDF'][1]['userName'] == '')) then
-						--
-						-- 	File_er[i] = tablet[items[i][1]]
-						--
-						-- else
-
-							sorted_table[i] = tablet[items[i][1]];
-
-						-- end;
-
-					end;
-
-					return sorted_table;
+					-- return sorted_table;
 
 				end;
 
