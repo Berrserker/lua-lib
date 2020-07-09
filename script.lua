@@ -17,6 +17,15 @@ local i_i = 0;
 local start_name = 'ВОРОНЦОВА_ОЛЕСЯ_24.10.1977';
 local flg = false;
 
+function log(m)
+
+	---примитивный логгер, тупо пишет ошибки в файл---
+	m = tostring(m)
+	local ok,err =	appendfile(Logfile,m..'\r\n');
+	if not ok then MsgBox(render{err,Logfile}) error'Ошибка логгирования' end;
+
+end;
+
 function split_table(filename,tab)
 
 	local prefix = 0;
@@ -140,7 +149,7 @@ function worker(count)
 		local surn = people:GetValue(1);
 		local birth = people:GetValue(4);
 		if (surn..'_'..name..'_'..birth) == start_name then flg = true; end;
-		if i_i <= start_i or flg == false then continue end;
+		if i_i <= start_i or not flg then continue end;
 		local FILE = {};
 		--MsgBox(render(name, surn, birth));
 		log(surn..'_'..name..'_'..birth..'_'..tostring(i_i)..'\n');
