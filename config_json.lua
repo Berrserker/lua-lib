@@ -1290,6 +1290,7 @@ function Json_Configure(SURNAME, NAME, DateOfB)
 
 				for Doc in BLOCK_NC.Records do
 
+					log('\r\nNC system nymber result '..tostring(Doc.SN));
 					local INPUT = {};
 					local INPUT_RAW = Doc:GetValue(310,'РЕ');
 					local SOURCE_ID = ''
@@ -1606,6 +1607,6 @@ function Json_Configure(SURNAME, NAME, DateOfB)
 	JSON_Person['LE'] = JSON_LE;
 	log('\nJSON_Person '..xrender(JSON_Person)..'\n');
 
-	return JSON_Person;
+	return JSON_Person; -- что хранится здесь? 100 договоров или оодин?
 
 end;
