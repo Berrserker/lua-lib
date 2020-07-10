@@ -1056,6 +1056,7 @@ function Json_Configure(SURNAME, NAME, DateOfB)
 
 					SOURCE_ID=SOURCE_ID:swap('PRT040815',''):swap('PRT040814','');
 					local IP = {};
+					if SOURCE_ID == '' or SOURCE_ID then continue end;
 					IP['userName'] = SOURCE_ID;
 					IP['applicationNumber'] = Doc:GetValue(2) ~= '' and Doc:GetValue(2) or 'NOT_FOUND';
 					IP['dateOfApplication'] = date_to_TOTDF(Doc:GetValue(3)~='' and Doc:GetValue(3) or Doc:GetValue(100));
@@ -1351,6 +1352,7 @@ function Json_Configure(SURNAME, NAME, DateOfB)
 
 					local TR = {};
 
+					if SOURCE_ID == '' or SOURCE_ID then continue end;
 					TR['userName'] = SOURCE_ID ~= '' and SOURCE_ID or 'NOT_FOUND';
 					TR['accountNumber'] = Doc:GetValue(3) ~= '' and Doc:GetValue(3) or 'NOT_FOUND';
 					TR['accountType'] = tostring(accountTyper(tostring(Doc:GetValue(1,1,false)))) ~= '' and tostring(accountTyper(tostring(Doc:GetValue(1,1,false)))) or nil;

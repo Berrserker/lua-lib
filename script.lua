@@ -232,28 +232,31 @@ function worker(count)
 
 					if (Person['TR'][TR]['PA']) and (not table.isempty(Person['TR'][TR]['PA'])) then
 
+						sub_writer['PA'] = {};
 						for PA in pairs(Person['TR'][TR]['PA']) do
 
-							local writer = {};
-							writer = copy(sub_writer);
-							writer['PA'] = {};
-							writer['PA'][1] = Person['TR'][TR]['PA'][PA]['toJSON'];
-							writer['TR'][1]['PA'] = nil;
-
-							--MsgBox(render(writer))
-							--error 'STOP'
-
-							-- if ((writer['TUTDF'][1]['reportedDate']) and (writer['TUTDF'][1]['reportedDate'] == '')) then
+							table.insert(sub_writer['PA'], Person['TR'][TR]['PA'][PA]['toJSON');
+							-- loc_iter = loc_iter + 1;
+							-- local writer = {};
+							-- writer = copy(sub_writer);
+							-- writer['PA'] = {};
+							-- writer['PA'][1] = Person['TR'][TR]['PA'][PA]['toJSON'];
+							-- writer['TR'][1]['PA'] = nil;
 							--
-							-- 	table.insert(File_er, writer);
+							-- --MsgBox(render(writer))
+							-- --error 'STOP'
 							--
-							-- else
-
-								-- table.insert(FILE, writer);
-
-							-- end;
-
-							table.insert(FILE, writer);
+							-- -- if ((writer['TUTDF'][1]['reportedDate']) and (writer['TUTDF'][1]['reportedDate'] == '')) then
+							-- --
+							-- -- 	table.insert(File_er, writer);
+							-- --
+							-- -- else
+							--
+							-- 	-- table.insert(FILE, writer);
+							--
+							-- -- end;
+							--
+							-- table.insert(FILE, writer);
 
 						end;
 
