@@ -44,7 +44,7 @@ function split_table(filename,tab)
 
 			local m = math.modf(num/size)
 			table.insert(writer[m+1], tab[num])
-			if math.fmod(num, size) == 99 and (num != size) then writer[#writer+1] = {}; end;
+			if math.fmod(num, size) == 99 and (num ~= size) then writer[#writer+1] = {}; end;
 
 		end;
 
@@ -235,7 +235,7 @@ function worker(count)
 						sub_writer['PA'] = {};
 						for PA in pairs(Person['TR'][TR]['PA']) do
 
-							table.insert(sub_writer['PA'], Person['TR'][TR]['PA'][PA]['toJSON');
+							table.insert(sub_writer['PA'], Person['TR'][TR]['PA'][PA]['toJSON']);
 							-- loc_iter = loc_iter + 1;
 							-- local writer = {};
 							-- writer = copy(sub_writer);
