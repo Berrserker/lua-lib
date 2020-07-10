@@ -754,6 +754,65 @@ local function Get_Additional_Blocks(tbl)
 
 	end;
 
+	if tbl['AR'] then
+
+		answer['PA'] = {};
+		answer['PA_last'] = {};
+		answer['PA_last']['Date_Of_PA'] = '02.02.1900';
+		for Doc in tbl['AR'].Records do
+
+			local INPUT = {};
+			local INPUT_RAW = Doc:GetValue(310,'ÐÅ');
+			local SOURCE_ID = ''
+
+			for rw in INPUT_RAW.Records do
+
+				SOURCE_ID = rw:GetValue(11);
+				SOURCE_RAW = Source_Rec_Found(SOURCE_ID);
+				table.insert(INPUT, Get_Input_Xml_Info(rw, SOURCE_RAW));
+
+			end;
+
+			local PA = {};
+			PA['Date_Of_PA'] = Doc:GetValue(5);
+			PA['Date_Of_Next_PA'] = date_to_TOTDF(Doc:GetValue(1));
+			PA['Summ_Of_Next_PA'] = Doc:GetValue(2);
+			PA['Summ_Of_Next_PA_Main'] = Doc:GetValue(3);
+			PA['Summ_Of_Next_PA_Perc'] = Doc:GetValue(4);
+			PA['Summ_Of_PA'] = Doc:GetValue(6);
+			PA['Summ_Of_PA_Main'] = Doc:GetValue(7);
+			PA['Summ_Of_PA_WF-PD'] = Doc:GetValue(12);
+			PA['V_Of_PA_'] = tostring(Doc:GetValue(13)) == 'ÏÎËÍÎÑÒÜÞ' and 'F' or tostring(Doc:GetValue(13)) == 'ÍÅ ÏÎËÍÎÑÒÜÞ' and 'P' or 'N'
+			PA['Summ_Of_Now-Now_Main'] = Doc:GetValue(9);
+			PA['Summ_Of_Now-Now_Perc'] = Doc:GetValue(18);
+			PA['Summ_Of_Now-Now_Other'] = Doc:GetValue(19);
+			PA['Balans'] = Doc:GetValue(10);
+			PA['Summ_12m_PA'] = Doc:GetValue(14);
+			PA['Q_12m_PA'] = Doc:GetValue(15);
+			PA['Summ_24m_PA'] = Doc:GetValue(16);
+			PA['Q_24m_PA'] = Doc:GetValue(17);
+			PA['PD_Main'] = Doc:GetValue(20);
+			PA['PD_Perc'] = Doc:GetValue(21);
+			PA['PD_Other'] = Doc:GetValue(22);
+			PA['PD_Summ'] = Doc:GetValue(23);
+
+			PA['toJSON'] = {};
+			PA['toJSON']['paymentAmount'] = PA['Summ_Of_PA']~='' and tostring(math.round(PA['Summ_Of_PA'])) or  tostring(999999999);
+			PA['toJSON']['paymentAmountExcept30+PastDue'] = PA['Summ_Of_PA_WF-PD']~='' and tostring(math.round(PA['Summ_Of_PA_WF-PD'])) or tostring(999999999);
+			PA['toJSON']['paymentCurrency'] = 'RUB';
+			PA['toJSON']['paymentDate'] = PA['Date_Of_PA']~='' and tonumber(date_to_TOTDF(PA['Date_Of_PA'])) > 19000101 and date_to_TOTDF(PA['Date_Of_PA']) or '19000202';
+			PA['toJSON']['paymentVolume'] = PA['V_Of_PA_']~='' and PA['V_Of_PA_'] or 'F';
+			PA['toJSON']['24mPaymentAmountExcept30+PastDue'] = PA['Summ_24m_PA']~='' and tostring(math.round(PA['Summ_24m_PA'])) or tostring(999999999);
+
+			PA['INFO'] = INPUT;
+			table.insert(answer['PA'], PA);
+
+			if DateTime(PA['Date_Of_PA'])>DateTime(answer['PA_last']['Date_Of_PA']) then answer['PA_last'] = PA; end;
+
+		end;
+
+	end;
+
 	if tbl['EN'] then
 
 		answer['EN'] = {};
@@ -1054,6 +1113,7 @@ function Json_Configure(SURNAME, NAME, DateOfB)
 
 					end;
 
+					if SOURCE_ID == '' or not SOURCE_ID then SOURCE_ID = Doc:GetValue(203); end;
 					SOURCE_ID=SOURCE_ID:swap('PRT040815',''):swap('PRT040814','');
 					local IP = {};
 					if SOURCE_ID == '' or not SOURCE_ID then continue end;
@@ -1295,6 +1355,7 @@ function Json_Configure(SURNAME, NAME, DateOfB)
 					local INPUT = {};
 					local INPUT_RAW = Doc:GetValue(310,'ÐÅ');
 					local SOURCE_ID = ''
+
 					if INPUT_RAW.Count>0 then
 
 						for rw in INPUT_RAW.Records do
@@ -1312,14 +1373,18 @@ function Json_Configure(SURNAME, NAME, DateOfB)
 
 					end;
 
+					if SOURCE_ID == '' or not SOURCE_ID then SOURCE_ID = Doc:GetValue(203); end;
+
 					SOURCE_ID=SOURCE_ID:swap('PRT040815',''):swap('PRT040814','');
 					local PastDueRaw = Doc:GetValue(720,'PR');
 					local PlaRaw = Doc:GetValue(400,'PL');
 					local EnsRaw = Doc:GetValue(600,'EN');
 					local LegalRaw = Doc:GetValue(700,'ÑÐ');
+					local Arch = Doc:GetValue(410,'AR');
 					local Table_to_ADDS = {};
 					Table_to_ADDS['PD'] = PastDueRaw;
 					Table_to_ADDS['PA'] = PlaRaw;
+					Table_to_ADDS['AR'] = Arch;
 					Table_to_ADDS['EN'] = EnsRaw;
 					Table_to_ADDS['LE'] = LegalRaw;
 					local ADDS = {};
