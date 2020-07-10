@@ -756,6 +756,14 @@ local function Get_Additional_Blocks(tbl)
 
 	if tbl['AR'] then
 
+		if not answer['PA'] then
+			
+			answer['PA'] = {};
+			answer['PA_last'] = {};
+			answer['PA_last']['Date_Of_PA'] = '02.02.1900';
+
+		end;
+
 		for Doc in tbl['AR'].Records do
 
 			local INPUT = {};
