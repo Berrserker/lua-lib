@@ -756,13 +756,17 @@ local function Get_Additional_Blocks(tbl)
 
 	if tbl['AR'] then
 
-		if not answer['PA'] then
-			
-			answer['PA'] = {};
-			answer['PA_last'] = {};
-			answer['PA_last']['Date_Of_PA'] = '02.02.1900';
+		-- if not answer['PA'] then
+		--
+		-- 	answer['PA'] = {};
+		-- 	answer['PA_last'] = {};
+		-- 	answer['PA_last']['Date_Of_PA'] = '02.02.1900';
+		--
+		-- end;
 
-		end;
+		answer['AR'] = {};
+		answer['AR_last'] = {};
+		answer['AR_last']['Date_Of_AR'] = '02.02.1900';
 
 		for Doc in tbl['AR'].Records do
 
@@ -778,41 +782,41 @@ local function Get_Additional_Blocks(tbl)
 
 			end;
 
-			local PA = {};
-			PA['Date_Of_PA'] = Doc:GetValue(5);
-			PA['Date_Of_Next_PA'] = date_to_TOTDF(Doc:GetValue(1));
-			PA['Summ_Of_Next_PA'] = Doc:GetValue(2);
-			PA['Summ_Of_Next_PA_Main'] = Doc:GetValue(3);
-			PA['Summ_Of_Next_PA_Perc'] = Doc:GetValue(4);
-			PA['Summ_Of_PA'] = Doc:GetValue(6);
-			PA['Summ_Of_PA_Main'] = Doc:GetValue(7);
-			PA['Summ_Of_PA_WF-PD'] = Doc:GetValue(12);
-			PA['V_Of_PA_'] = tostring(Doc:GetValue(13)) == 'ÏÎËÍÎÑÒÜÞ' and 'F' or tostring(Doc:GetValue(13)) == 'ÍÅ ÏÎËÍÎÑÒÜÞ' and 'P' or 'N'
-			PA['Summ_Of_Now-Now_Main'] = Doc:GetValue(9);
-			PA['Summ_Of_Now-Now_Perc'] = Doc:GetValue(18);
-			PA['Summ_Of_Now-Now_Other'] = Doc:GetValue(19);
-			PA['Balans'] = Doc:GetValue(10);
-			PA['Summ_12m_PA'] = Doc:GetValue(14);
-			PA['Q_12m_PA'] = Doc:GetValue(15);
-			PA['Summ_24m_PA'] = Doc:GetValue(16);
-			PA['Q_24m_PA'] = Doc:GetValue(17);
-			PA['PD_Main'] = Doc:GetValue(20);
-			PA['PD_Perc'] = Doc:GetValue(21);
-			PA['PD_Other'] = Doc:GetValue(22);
-			PA['PD_Summ'] = Doc:GetValue(23);
+			local AR = {};
+			AR['Date_Of_AR'] = Doc:GetValue(5);
+			AR['Date_Of_Next_AR'] = date_to_TOTDF(Doc:GetValue(1));
+			AR['Summ_Of_Next_AR'] = Doc:GetValue(2);
+			AR['Summ_Of_Next_AR_Main'] = Doc:GetValue(3);
+			AR['Summ_Of_Next_AR_Perc'] = Doc:GetValue(4);
+			AR['Summ_Of_AR'] = Doc:GetValue(6);
+			AR['Summ_Of_AR_Main'] = Doc:GetValue(7);
+			AR['Summ_Of_AR_WF-PD'] = Doc:GetValue(12);
+			AR['V_Of_AR_'] = tostring(Doc:GetValue(13)) == 'ÏÎËÍÎÑÒÜÞ' and 'F' or tostring(Doc:GetValue(13)) == 'ÍÅ ÏÎËÍÎÑÒÜÞ' and 'P' or 'N'
+			AR['Summ_Of_Now-Now_Main'] = Doc:GetValue(9);
+			AR['Summ_Of_Now-Now_Perc'] = Doc:GetValue(18);
+			AR['Summ_Of_Now-Now_Other'] = Doc:GetValue(19);
+			AR['Balans'] = Doc:GetValue(10);
+			AR['Summ_12m_AR'] = Doc:GetValue(14);
+			AR['Q_12m_AR'] = Doc:GetValue(15);
+			AR['Summ_24m_AR'] = Doc:GetValue(16);
+			AR['Q_24m_AR'] = Doc:GetValue(17);
+			AR['PD_Main'] = Doc:GetValue(20);
+			AR['PD_Perc'] = Doc:GetValue(21);
+			AR['PD_Other'] = Doc:GetValue(22);
+			AR['PD_Summ'] = Doc:GetValue(23);
 
-			PA['toJSON'] = {};
-			PA['toJSON']['paymentAmount'] = PA['Summ_Of_PA']~='' and tostring(math.round(PA['Summ_Of_PA'])) or  tostring(999999999);
-			PA['toJSON']['paymentAmountExcept30+PastDue'] = PA['Summ_Of_PA_WF-PD']~='' and tostring(math.round(PA['Summ_Of_PA_WF-PD'])) or tostring(999999999);
-			PA['toJSON']['paymentCurrency'] = 'RUB';
-			PA['toJSON']['paymentDate'] = PA['Date_Of_PA']~='' and tonumber(date_to_TOTDF(PA['Date_Of_PA'])) > 19000101 and date_to_TOTDF(PA['Date_Of_PA']) or '19000202';
-			PA['toJSON']['paymentVolume'] = PA['V_Of_PA_']~='' and PA['V_Of_PA_'] or 'F';
-			PA['toJSON']['24mPaymentAmountExcept30+PastDue'] = PA['Summ_24m_PA']~='' and tostring(math.round(PA['Summ_24m_PA'])) or tostring(999999999);
+			AR['toJSON'] = {};
+			AR['toJSON']['paymentAmount'] = A['Summ_Of_AR']~='' and tostring(math.round(AR['Summ_Of_AR'])) or  tostring(999999999);
+			AR['toJSON']['paymentAmountExcept30+PastDue'] = AR['Summ_Of_AR_WF-PD']~='' and tostring(math.round(AR['Summ_Of_AR_WF-PD'])) or tostring(999999999);
+			AR['toJSON']['paymentCurrency'] = 'RUB';
+			AR['toJSON']['paymentDate'] = AR['Date_Of_AR']~='' and tonumber(date_to_TOTDF(AR['Date_Of_AR'])) > 19000101 and date_to_TOTDF(AR['Date_Of_AR']) or '19000202';
+			AR['toJSON']['paymentVolume'] = AR['V_Of_AR_']~='' and AR['V_Of_AR_'] or 'F';
+			AR['toJSON']['24mPaymentAmountExcept30+PastDue'] = AR['Summ_24m_AR']~='' and tostring(math.round(AR['Summ_24m_AR'])) or tostring(999999999);
 
-			PA['INFO'] = INPUT;
-			table.insert(answer['PA'], PA);
+			AR['INFO'] = INPUT;
+			table.insert(answer['AR'], AR);
 
-			if DateTime(PA['Date_Of_PA'])>DateTime(answer['PA_last']['Date_Of_PA']) then answer['PA_last'] = PA; end;
+			if DateTime(AR['Date_Of_AR'])>DateTime(answer['AR_last']['Date_Of_AR']) then answer['AR_last'] = AR; end;
 
 		end;
 
