@@ -25,7 +25,7 @@ function date_transform(date)
 	date = date:swap('-','.');
 	date = string.split(date,'.');
 	local answer = date[3]..'.'..date[2]..'.'..date[1];
-	log(answer);
+	--log(answer);
 
 	return answer;
 
@@ -73,10 +73,10 @@ end;
 function recordset_worker(str_to_find, recordset, line, loan_num, loan_sum, loan_date, login, uuid)
 
 
-	if recSetPerson.Count == 0 then	log('Субъекта не нашлось//'..str_to_find..'//mongo_id//'..line['_id']['$oid']);	return 1; end;
-	if recSetPerson.Count > 1 then	log('Субъекта много//'..str_to_find..'//mongo_id//'..line['_id']['$oid']); 	return 1; end;
+	if recordset.Count == 0 then	log('Субъекта не нашлось//'..str_to_find..'//mongo_id//'..line['_id']['$oid']);	return 1; end;
+	if recordset.Count > 1 then	log('Субъекта много//'..str_to_find..'//mongo_id//'..line['_id']['$oid']); 	return 1; end;
 
-	for recPerson in recSetPerson.Records do
+	for recPerson in recordset.Records do
 
 		credit_update(recPerson, loan_num, loan_sum, loan_date, login, uuid)
 		log('Работаю с //'..str_to_find..'//mongo_id//'..line['_id']['$oid']);
