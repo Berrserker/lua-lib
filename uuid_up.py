@@ -103,21 +103,19 @@ def row_executor(row):
 	# pp.pprint(db.all())
 	# exit()
 	# document = credithistories.find_one(b)
-	pp.pprint(row[2])
+	# pp.pprint(row[2])
 	is_pack = True if row[2].find('PREFIXSTSENDPACKCHNEW') != -1 else False
-	pp.pprint(is_pack)
+	# pp.pprint(is_pack)
 	row[2] = row[2].replace('CH#PRT040815#', '')
 	start = 0
 	end = row[2].find('PREFIX')
-	pp.pprint(str(start)+'||'+str(end))
+	# pp.pprint(str(start)+'||'+str(end))
 	id_num = row[2][start:end]
-	pp.pprint(id_num)
+	# pp.pprint(id_num)
 	finder = db.search(Fruit.num == id_num)
-	pp.pprint(finder)
-	exit()
-
-
-
+	if finder:
+		pp.pprint(finder)
+		exit()
 
 def row_executor_sub(row):
 
@@ -203,4 +201,4 @@ def worker(test, breaker):
 
 # worker(True, True)
 # worker(True, False)
-worker(False, True)
+worker(False, False)

@@ -171,18 +171,18 @@ function credit_update(record, loan_num, loan_sum, loan_date, login, uuid)
 			local date = tostring(doc:GetValue(6));
 			local date1 = (date == loan_date) and true or false;
 
-			log('try to write//'..source..'|'..login..'//'..sum..'|'..loan_sum..'//'..num..'|'..loan_num..'//'..date..'|'..loan_date..'//uuid|'..uuid)
+			log('try to write//'..source..'|'..login..'//'..sum..'|'..loan_sum..'//'..num..'|'..loan_num..'//'..date..'|'..loan_date..'//uuid|'..uuid);
 
 			if (source1) and (sum1) and (num1) and (date1) then
 
-				log('Ywrite//'..source..'|'..login..'//'..sum..'|'..loan_sum..'//'..num..'|'..loan_num..'//'..date..'|'..loan_date..'//uuid|'..uuid)
+				log('Ywrite//'..source..'|'..login..'//'..sum..'|'..loan_sum..'//'..num..'|'..loan_num..'//'..date..'|'..loan_date..'//uuid|'..uuid);
 
-				local ok = record:Lock()
+				local ok = record:Lock();
 				if ok then -- если блокировка успешна, переходим к редактированию записи?
 
-					record:SetValue(99, uuid)
-					record:Update() -- сохраняем запись
-					record:Unlock() -- разблокируем запись
+					record:SetValue(99, uuid);
+					record:Update(); -- сохраняем запись
+					record:Unlock(); -- разблокируем запись
 
 				end;
 
@@ -194,7 +194,7 @@ function credit_update(record, loan_num, loan_sum, loan_date, login, uuid)
 
 end;
 
-function recordset_worker(str_to_find, recordset, line, loan_num, loan_sum, loan_date, login, uuid)
+function recordset_worker(str_to_find, recordset, line, loan_num, loan_sum, loan_date, login, uuid);
 
 
 	if recordset.Count == 0 then	log('Субъекта не нашлось//'..str_to_find..'//mongo_id//'..line['_id']['$oid']);	return 1; end;
@@ -204,7 +204,7 @@ function recordset_worker(str_to_find, recordset, line, loan_num, loan_sum, loan
 
 
 		log('Работаю с //'..str_to_find..'//mongo_id//'..line['_id']['$oid']);
-		credit_update(recPerson, loan_num, loan_sum, loan_date, login, uuid)
+		credit_update(recPerson, loan_num, loan_sum, loan_date, login, uuid);
 
 	end;
 
@@ -217,7 +217,7 @@ function line_worker(line)
 	if (line ~= '[') and (line ~= ']') then
 
 		line = line:decode('utf-8');
-		line = string.sub(line, 1, #line -1)
+		line = string.sub(line, 1, #line -1);
 		line = json.decode(line);
 		local login = string.upper(line['userName']);
 
@@ -238,7 +238,7 @@ function line_worker(line)
 					local uuid = line['loan']['uuid'];
 					local str_to_find = [[ОТ ФЛ01 1 РВ ']]..sname..[[' И 2 РВ ']]..fname..[[' И 4 РВ ']]..db..[[']];
 					local recSetPerson = baseFL:StringRequest(str_to_find);
-					recordset_worker(str_to_find, recSetPerson, line, loan_num, loan_sum, loan_date, login, uuid)
+					recordset_worker(str_to_find, recSetPerson, line, loan_num, loan_sum, loan_date, login, uuid);
 
 				end;
 
@@ -257,7 +257,7 @@ function line_worker(line)
 
 						local str_to_find = [[ОТ ЮЛ01 8 РВ ']]..inn..[[']];
 						local recSetPerson = baseUL:StringRequest(str_to_find);
-						recordset_worker(str_to_find, recSetPerson, line, loan_num, loan_sum, loan_date, login, uuid)
+						recordset_worker(str_to_find, recSetPerson, line, loan_num, loan_sum, loan_date, login, uuid);
 
 					end;
 
@@ -265,7 +265,7 @@ function line_worker(line)
 
 						local str_to_find = [[ОТ ЮЛ01 7 РВ ']]..ogrn..[[']];
 						local recSetPerson = baseUL:StringRequest(str_to_find);
-						recordset_worker(str_to_find, recSetPerson, line, loan_num, loan_sum, loan_date, login, uuid)
+						recordset_worker(str_to_find, recSetPerson, line, loan_num, loan_sum, loan_date, login, uuid);
 
 					end;
 
@@ -283,7 +283,7 @@ function main(file)
 
 	for line in io.lines(file) do
 
-		local ok, err = pcall(line_worker, line)
+		local ok, err = pcall(line_worker, line);
 
 		if (not ok) then err_log('ERROR//'..err..'//LINE//'..line) end;
 
