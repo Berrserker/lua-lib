@@ -1132,7 +1132,7 @@ function Json_Configure(SURNAME, NAME, DateOfB)
 					IP['creditorType'] = INPUT[1]['CREDITOR_TYPE'] ~= '' and INPUT[1]['CREDITOR_TYPE'] or '2';
 					IP['requestedLoanType'] = tostring(Doc:GetValue(7,1,false)) ~= '' and getCreditType(tostring(IP['creditorType'], Doc:GetValue(7,1,false))) or tostring(Doc:GetValue(21,1,false)) ~= '' and getCreditType(tostring(IP['creditorType'], Doc:GetValue(21,1,false))) or '200'; --Doc:GetValue(1);
 					IP['applicationShipmentWay'] = Doc:GetValue(11,1,false) ~= '' and Doc:GetValue(11,1,false) or '2';
-					IP['flagOfApproval'] = (Doc:GetValue(18) and 'Y') or '';
+					IP['flagOfApproval'] = (Doc:GetValue(18) ~= '' and Doc:GetValue(19) ~= '' and 'Y') or '';
 					IP['typeFlag'] = '1';
 					IP['approvalExpiration'] = IP['flagOfApproval'] ~= '' and (Doc:GetValue(4) ~= '' and date_to_TOTDF(Doc:GetValue(4)) or Doc:GetValue(100) ~= '' and date_to_TOTDF(Doc:GetValue(100)) or '19000202') or nil;
 					IP['rejectedAmount'] = Doc:GetValue(16,1,false) ~= '' and Doc:GetValue(8) ~= '' and tostring(math.round(Doc:GetValue(8))) or nil;
@@ -1290,7 +1290,7 @@ function Json_Configure(SURNAME, NAME, DateOfB)
 		--
 		-- 			TR['userName'] = SOURCE_ID;
 		-- 			TR['accountNumber'] = Doc:GetValue(2);
-		-- 			TR['accountType'] = Doc:GetValue(1); ---???ÂÎÏÐÎÑ ìá òóò ïîëå 116???---
+		-- 			TR['accountType'] = Doc:GetValue(1);
 		-- 			TR['accountRelationship'] = '1';--Doc:GetValue(1);
 		-- 			TR['dateAccountOpened'] = date_to_TOTDF(Doc:GetValue(4));
 		-- 			TR['dateOfLastPayment'] = date_to_TOTDF(Doc:GetValue(5));
