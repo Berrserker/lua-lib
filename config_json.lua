@@ -1132,7 +1132,7 @@ function Json_Configure(SURNAME, NAME, DateOfB)
 					IP['creditorType'] = INPUT[1]['CREDITOR_TYPE'] ~= '' and INPUT[1]['CREDITOR_TYPE'] or '2';
 					IP['requestedLoanType'] = tostring(Doc:GetValue(7,1,false)) ~= '' and getCreditType(tostring(IP['creditorType'], Doc:GetValue(7,1,false))) or tostring(Doc:GetValue(21,1,false)) ~= '' and getCreditType(tostring(IP['creditorType'], Doc:GetValue(21,1,false))) or '200'; --Doc:GetValue(1);
 					IP['applicationShipmentWay'] = Doc:GetValue(11,1,false) ~= '' and Doc:GetValue(11,1,false) or '2';
-					IP['flagOfApproval'] = (Doc:GetValue(18) ~= '' and Doc:GetValue(19) ~= '' and 'Y') or '';
+					IP['flagOfApproval'] = (Doc:GetValue(18) ~= '' and Doc:GetValue(19) ~= '' and 'Y') or 'U';
 					IP['typeFlag'] = '1';
 					IP['approvalExpiration'] = IP['flagOfApproval'] ~= '' and (Doc:GetValue(4) ~= '' and date_to_TOTDF(Doc:GetValue(4)) or Doc:GetValue(100) ~= '' and date_to_TOTDF(Doc:GetValue(100)) or '19000202') or nil;
 					IP['rejectedAmount'] = Doc:GetValue(16,1,false) ~= '' and Doc:GetValue(8) ~= '' and tostring(math.round(Doc:GetValue(8))) or nil;
@@ -1247,110 +1247,140 @@ function Json_Configure(SURNAME, NAME, DateOfB)
 		-- end);log('Pr result '..xrender(ok, result));
 		--
 		-- --------Обработка займа(Старая база)при наличии--------
-		-- ---???ВОПРОС пока так, надо переделывать, я хз как это делать, тут нужен Чуфистов пусть сам разбирается со своей старой базой??? надо насnроить поручительство и банковскую гарантию ??? починить платежи и просрочку ???---
-		--
-		-- FLAG = 0;
-		--
-		-- log('\n Start work at KD \n');
-		-- local ok, result = pcall( do
-		--
-		-- 	if BLOCK_KD.Count>0 and FLAG == 1  then
-		--
-		-- 		for Doc in BLOCK_KD.Records do
-		--
-		-- 			local INPUT = {};
-		-- 			local INPUT_RAW = Doc:GetValue(310,'РЕ');
-		-- 			local SOURCE_ID = ''
-		--
-		-- 			if INPUT_RAW.Count>0 then
-		--
-		-- 				for rw in INPUT_RAW.Records do
-		--
-		-- 					SOURCE_ID = rw:GetValue(11);
-		-- 					SOURCE_RAW = Source_Rec_Found(SOURCE_ID);
-		-- 					table.insert(INPUT, Get_Input_Xml_Info(rw, SOURCE_RAW));
-		--
-		-- 				end;
-		--
-		-- 			else
-		--
-		-- 				SOURCE_ID = Doc:GetValue(203);
-		-- 				--SOURCE_RAW = Source_Rec_Found(SOURCE_ID);
-		--
-		-- 			end;
-		--
-		-- 			SOURCE_ID=SOURCE_ID:swap('PRT040815',''):swap('PRT040814','');
-		-- 			tbl_to_guarant = {};
-		-- 			tbl_to_guarant['BG_raw'] = '';
-		-- 			tbl_to_guarant['N_doc'] = Doc:GetValue(2);
-		-- 			BG_Guarantee = GetBG(tbl_to_guarant);
-		-- 			PR_Guarantor = Get_Guarantors(tbl_to_guarant['N_doc']);
-		--
-		-- 			local TR = {};
-		--
-		-- 			TR['userName'] = SOURCE_ID;
-		-- 			TR['accountNumber'] = Doc:GetValue(2);
-		-- 			TR['accountType'] = Doc:GetValue(1);
-		-- 			TR['accountRelationship'] = '1';--Doc:GetValue(1);
-		-- 			TR['dateAccountOpened'] = date_to_TOTDF(Doc:GetValue(4));
-		-- 			TR['dateOfLastPayment'] = date_to_TOTDF(Doc:GetValue(5));
-		-- 			TR['accountRating'] = Doc:GetValue(6)
-		-- 			TR['dateAccountRating'] = date_to_TOTDF(Doc:GetValue(7));
-		-- 			TR['dateReported'] = date_to_TOTDF(Doc:GetValue(7));
-		-- 			TR['creditLimitOrContractAmount'] = Doc:GetValue(55);
-		-- 			TR['balance'] = Doc:GetValue(9);
-		-- 			TR['pastDue'] = Doc:GetValue(65);
-		-- 			TR['nextPayment'] = Doc:GetValue(11);
-		-- 			TR['creditPaymentFrequency'] = '';
-		-- 			TR['MOP'] = Doc:GetValue(66);
-		-- 			TR['currencyCode'] = Doc:GetValue(13);
-		-- 			TR['collateralCode'] = Doc:GetValue(14);
-		-- 			TR['dateOfContractTermination'] = date_to_TOTDF(Doc:GetValue(15));
-		-- 			TR['datePaymentDue'] = date_to_TOTDF(Doc:GetValue(15));
-		-- 			TR['dateInterestPaymentDue'] = date_to_TOTDF(Doc:GetValue(24));
-		-- 			TR['interestPaymentFrequency'] = '';
-		-- 			TR['oldUserName'] = '';
-		-- 			TR['oldAccountNumber'] = '';
-		-- 			TR['amountOutstanding'] = Doc:GetValue(30);
-		-- 			TR['guarantorIndicator'] = PR_Guarantor['Main']['Flag'];Doc:GetValue(6);
-		-- 			TR['volumeOfDebtSecuredByGuarantee'] = PR_Guarantor['Main']['V_GR'];
-		-- 			TR['guaranteeSum'] = tostring(PR_Guarantor['Main']['Summ_GR']) ~= '0' and tostring(PR_Guarantor['Main']['Summ_GR']) or nil;
-		-- 			TR['guaranteeTerm'] = date_to_TOTDF(PR_Guarantor['Main']['Date_End_GR']);
-		-- 			TR['bankGuaranteeIndicator'] = 'N';---???ВОПРОС пока так, надо переделывать, я хз как это делать ???---
-		-- 			TR['volumeOfDebtSecuredByBankGuarantee'] = 'P';---???ВОПРОС пока так, надо переделывать, я хз как это делать ???---
-		-- 			TR['bankGuaranteeSum'] = 10;---???ВОПРОС пока так, надо переделывать, я хз как это делать ???---
-		-- 			TR['bankGuaranteeTerm'] = date_to_TOTDF('01.01.2200');
-		-- 			TR['collateralValue'] = Doc:GetValue(91);
-		-- 			TR['collateralDate'] = date_to_TOTDF(Doc:GetValue(92));
-		-- 			TR['collateralAgreementExpirationDate'] = date_to_TOTDF(Doc:GetValue(93));
-		-- 			TR['overallValueOfCredit'] = Doc:GetValue(20);
-		-- 			TR['rightOfClaimAcquirersNames'] = ((Doc:GetValue(85)) and (Doc:GetValue(85)..[[ ]]..Doc:GetValue(86)..[[ ]]..Doc:GetValue(87)..[[ ]]..Doc:GetValue(88))) or ((Doc:GetValue(76))and(Doc:GetValue(76)..[[ ]]..Doc:GetValue(77)..[[ ]]..Doc:GetValue(78)));
-		-- 			TR['rightOfClaimAcquirersRegistrationData'] = ((Doc:GetValue(85)) and (Doc:GetValue(89))) or ((Doc:GetValue(76))and(Doc:GetValue(79)..[[ ]]..Doc:GetValue(80)..[[ ]]..Doc:GetValue(81)..[[ ]]..Doc:GetValue(82)));
-		-- 			TR['rightOfClaimAcquirersTaxpayerID'] = ((Doc:GetValue(85)) and (Doc:GetValue(90))) or ((Doc:GetValue(76))and((Doc:GetValue(84))));
-		-- 			TR['rightOfClaimAcquirersSocialInsuranceNumber'] = (Doc:GetValue(76)) and (Doc:GetValue(83)) ;
-		-- 			TR['completePerformanceOfObligationsDate'] = date_to_TOTDF(Doc:GetValue(8));
-		-- 			TR['principalAmountOutstandingAsOfLastPaymentDate'] = Doc:GetValue(30);
-		-- 			TR['interestAmountOutstandingAsOfLastPaymentDate'] = '';
-		-- 			TR['otherAmountOutstandingAsOfLastPaymentDate'] = '';
-		-- 			TR['principalAmountPastDueAsOfLastPaymentDate'] = Doc:GetValue(65);
-		-- 			TR['interestAmountPastDueAsOfLastPaymentDate'] = '';
-		-- 			TR['otherAmountPastDueAsOfLastPaymentDate'] = '';
-		-- 			TR['gracePeriodEndDate'] = '';
-		-- 			TR['tradeUniversallyUniqueID'] = Doc:GetValue(99) or uuid() or 'tutapusta1122334455';
-		--
-		-- 			TR['INFO'] = INPUT;
-		--
-		-- 			TR['PA'] = {};
-		--
-		-- 			table.insert(JSON_TR, TR);
-		--
-		-- 		end;
-		--
-		-- 	end;
-		--
-		-- end);log('KD result '..xrender(ok, result));
-		--
-		-- FLAG = 1;
+
+		FLAG = 1;
+
+		log('\n Start work at KD \n');
+		local ok, result = pcall( do
+
+			if BLOCK_KD.Count>0 and FLAG == 1  then
+
+				local KD = bankCKKI:GetBase('КД');
+
+				local SetNum = {};
+
+				for Doc in BLOCK_KD.Records do
+
+					local SysNum = Doc:GetValue(1);
+					local Num = Doc:GetValue(2);
+
+					if #SetNum == 0 then
+
+						SetNum[Num] = recordSet({SysNum}, KD);
+
+					else
+
+						if SetNum[Num] ~= nil then
+
+							SetNum[Num].Add(SysNum)
+
+						else
+
+							SetNum[Num] = recordSet({SysNum}, KD);
+
+						end;
+
+					end;
+
+				end;
+
+				for i in
+
+				for Doc in BLOCK_KD.Records do
+
+					local INPUT = {};
+					local INPUT_RAW = Doc:GetValue(310,'РЕ');
+					local SOURCE_ID = ''
+
+					if INPUT_RAW.Count>0 then
+
+						for rw in INPUT_RAW.Records do
+
+							SOURCE_ID = rw:GetValue(11);
+							SOURCE_RAW = Source_Rec_Found(SOURCE_ID);
+							table.insert(INPUT, Get_Input_Xml_Info(rw, SOURCE_RAW));
+
+						end;
+
+					else
+
+						SOURCE_ID = Doc:GetValue(203);
+						--SOURCE_RAW = Source_Rec_Found(SOURCE_ID);
+
+					end;
+
+					SOURCE_ID=SOURCE_ID:swap('PRT040815',''):swap('PRT040814','');
+					tbl_to_guarant = {};
+					tbl_to_guarant['BG_raw'] = '';
+					tbl_to_guarant['N_doc'] = Doc:GetValue(2);
+					BG_Guarantee = GetBG(tbl_to_guarant);
+					PR_Guarantor = Get_Guarantors(tbl_to_guarant['N_doc']);
+
+					local TR = {};
+
+					TR['userName'] = SOURCE_ID;
+					TR['accountNumber'] = Doc:GetValue(2);
+					TR['accountType'] = Doc:GetValue(1);
+					TR['accountRelationship'] = '1';--Doc:GetValue(1);
+					TR['dateAccountOpened'] = date_to_TOTDF(Doc:GetValue(4));
+					TR['dateOfLastPayment'] = date_to_TOTDF(Doc:GetValue(5));
+					TR['accountRating'] = Doc:GetValue(6)
+					TR['dateAccountRating'] = date_to_TOTDF(Doc:GetValue(7));
+					TR['dateReported'] = date_to_TOTDF(Doc:GetValue(7));
+					TR['creditLimitOrContractAmount'] = Doc:GetValue(55);
+					TR['balance'] = Doc:GetValue(9);
+					TR['pastDue'] = Doc:GetValue(65);
+					TR['nextPayment'] = Doc:GetValue(11);
+					TR['creditPaymentFrequency'] = '';
+					TR['MOP'] = Doc:GetValue(66);
+					TR['currencyCode'] = Doc:GetValue(13);
+					TR['collateralCode'] = Doc:GetValue(14);
+					TR['dateOfContractTermination'] = date_to_TOTDF(Doc:GetValue(15));
+					TR['datePaymentDue'] = date_to_TOTDF(Doc:GetValue(15));
+					TR['dateInterestPaymentDue'] = date_to_TOTDF(Doc:GetValue(24));
+					TR['interestPaymentFrequency'] = '';
+					TR['oldUserName'] = '';
+					TR['oldAccountNumber'] = '';
+					TR['amountOutstanding'] = Doc:GetValue(30);
+					TR['guarantorIndicator'] = PR_Guarantor['Main']['Flag'];Doc:GetValue(6);
+					TR['volumeOfDebtSecuredByGuarantee'] = PR_Guarantor['Main']['V_GR'];
+					TR['guaranteeSum'] = tostring(PR_Guarantor['Main']['Summ_GR']) ~= '0' and tostring(PR_Guarantor['Main']['Summ_GR']) or nil;
+					TR['guaranteeTerm'] = date_to_TOTDF(PR_Guarantor['Main']['Date_End_GR']);
+					TR['bankGuaranteeIndicator'] = 'N';---???ВОПРОС пока так, надо переделывать, я хз как это делать ???---
+					TR['volumeOfDebtSecuredByBankGuarantee'] = 'P';---???ВОПРОС пока так, надо переделывать, я хз как это делать ???---
+					TR['bankGuaranteeSum'] = 10;---???ВОПРОС пока так, надо переделывать, я хз как это делать ???---
+					TR['bankGuaranteeTerm'] = date_to_TOTDF('01.01.2200');
+					TR['collateralValue'] = Doc:GetValue(91);
+					TR['collateralDate'] = date_to_TOTDF(Doc:GetValue(92));
+					TR['collateralAgreementExpirationDate'] = date_to_TOTDF(Doc:GetValue(93));
+					TR['overallValueOfCredit'] = Doc:GetValue(20);
+					TR['rightOfClaimAcquirersNames'] = ((Doc:GetValue(85)) and (Doc:GetValue(85)..[[ ]]..Doc:GetValue(86)..[[ ]]..Doc:GetValue(87)..[[ ]]..Doc:GetValue(88))) or ((Doc:GetValue(76))and(Doc:GetValue(76)..[[ ]]..Doc:GetValue(77)..[[ ]]..Doc:GetValue(78)));
+					TR['rightOfClaimAcquirersRegistrationData'] = ((Doc:GetValue(85)) and (Doc:GetValue(89))) or ((Doc:GetValue(76))and(Doc:GetValue(79)..[[ ]]..Doc:GetValue(80)..[[ ]]..Doc:GetValue(81)..[[ ]]..Doc:GetValue(82)));
+					TR['rightOfClaimAcquirersTaxpayerID'] = ((Doc:GetValue(85)) and (Doc:GetValue(90))) or ((Doc:GetValue(76))and((Doc:GetValue(84))));
+					TR['rightOfClaimAcquirersSocialInsuranceNumber'] = (Doc:GetValue(76)) and (Doc:GetValue(83)) ;
+					TR['completePerformanceOfObligationsDate'] = date_to_TOTDF(Doc:GetValue(8));
+					TR['principalAmountOutstandingAsOfLastPaymentDate'] = Doc:GetValue(30);
+					TR['interestAmountOutstandingAsOfLastPaymentDate'] = '';
+					TR['otherAmountOutstandingAsOfLastPaymentDate'] = '';
+					TR['principalAmountPastDueAsOfLastPaymentDate'] = Doc:GetValue(65);
+					TR['interestAmountPastDueAsOfLastPaymentDate'] = '';
+					TR['otherAmountPastDueAsOfLastPaymentDate'] = '';
+					TR['gracePeriodEndDate'] = '';
+					TR['tradeUniversallyUniqueID'] = Doc:GetValue(99) or uuid() or 'tutapusta1122334455';
+
+					TR['INFO'] = INPUT;
+
+					TR['PA'] = {};
+
+					table.insert(JSON_TR, TR);
+
+				end;
+
+			end;
+
+		end);log('KD result '..xrender(ok, result));
+
+		FLAG = 1;
 
 		log('\n Start work at NC \n');
 		local ok, result = pcall( do
